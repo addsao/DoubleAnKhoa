@@ -8,47 +8,45 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var categories: [ProductCategory] = []
-    @State private var products: [Product] = []
-    
+    @EnvironmentObject var controller: StoreController
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                HomeHeaderView(
-                    storeName: "Cá Cảnh Xinh",
-                    subtitle: "Thế giới thủy sinh trong tầm tay ♡"
-                )
-                
-                LocationRowView()    // (có thể tách riêng view)
-                SearchBarView()      // (có thể tách riêng view)
-                
-                BannerView()
-                    .padding(.vertical, 12)
-                
-                CategoryRowView(categories: categories)
-                    .padding(.vertical, 8)
-                
-                ProductSectionView(
-                    title: "Sản phẩm nổi bật",
-                    products: products
-                )
-                
-                Spacer()
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 12) {
+                    HomeHeaderView(
+                        storeName: "Cá Cảnh Xinh",
+                        subtitle: "Thế giới thủy sinh trong tầm tay ♡"
+                    )
+                    
+                    LocationRowView()
+                    
+                    SearchBarView(searchText: $controller.searchText)
+                    
+                    BannerView()
+                        .padding(.vertical, 4)
+                    
+                    CategoryRowView(
+                        categories: controller.categories,
+                        selectedCategory: $controller.selectedCategory
+                    )
+                    .padding(.vertical, 4)
+                    
+                    ProductSectionView(
+                        title: controller.selectedCategory?.name ?? "Sản phẩm nổi bật",
+                        products: controller.filteredProducts
+                    )
+                }
+                .padding(.bottom, 20)
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationBarHidden(true)
-            .onAppear {
-                loadSampleData()
-            }
+            #if os(iOS)
+            .toolbar(.hidden, for: .navigationBar)
+            #endif
         }
-    }
-    
-    private func loadSampleData() {
-        // Tạo dữ liệu mẫu cho categories và products
-        // (omitted...)
     }
 }
 
 #Preview {
     HomeView()
+        .environmentObject(StoreController())
 }

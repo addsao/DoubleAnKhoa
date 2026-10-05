@@ -20,6 +20,36 @@ struct Product: Identifiable, Hashable, Codable {
     var isFeatured: Bool
     var rating: Double
     
+    static let availableAssetImages: [String] = [
+            "fish1",
+            "fish2",
+            "fish3",
+            "fish4",
+            "fish5",
+            "fish6",
+            "fish7",
+            "fish8",
+            "fish9",
+            "fish10",
+            "fish11",
+            "fish12",
+            "fish13",
+            "fish14",
+            "fish15",
+            "fish16",
+            "fish17",
+            "fish18",
+            "fish19",
+            "fish20",
+            "fish21",
+            "fish22",
+            "fish23",
+        ]
+    
+    static var randomImageName: String {
+            availableAssetImages.randomElement() ?? "fish_placeholder"
+        }
+    
     init(
         id: UUID = UUID(),
         name: String,
@@ -290,4 +320,16 @@ extension Product {
     }
     
     static let preview = sampleProducts[0]
+}
+
+extension Product {
+    
+    /// Khởi tạo lại danh sách dữ liệu mẫu với imageName ngẫu nhiên từ Asset Catalog
+    static var sampleProductsWithRandomImages: [Product] {
+        sampleProducts.map { product in
+            var updated = product
+            updated.imageName = Product.randomImageName
+            return updated
+        }
+    }
 }

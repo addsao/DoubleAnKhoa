@@ -21,11 +21,9 @@ struct Order: Identifiable, Hashable, Codable {
     var shippingFee: Double
     var note: String
 
-    // MARK: - Hằng số nghiệp vụ
     static let defaultShippingFee: Double = 30_000
     static let freeShippingThreshold: Double = 500_000
 
-    // MARK: - Khởi tạo
 
     init(
         id: UUID = UUID(),
@@ -46,11 +44,9 @@ struct Order: Identifiable, Hashable, Codable {
         self.orderDate = orderDate
         self.status = status
         self.note = note
-        // Nếu không truyền phí ship → tự tính theo tổng tiền hàng.
         self.shippingFee = shippingFee ?? Order.calculateShippingFee(for: items.totalAmount)
     }
 
-    /// Tạo đơn hàng trực tiếp từ giỏ hàng.
     init(from cart: [CartItem], customerName: String, phoneNumber: String, shippingAddress: String, note: String = "") {
         self.init(
             customerName: customerName,
@@ -61,41 +57,25 @@ struct Order: Identifiable, Hashable, Codable {
         )
     }
 
-    // MARK: - Tính tiền
 
-    /// Phí ship theo tổng tiền hàng: miễn phí nếu đạt ngưỡng.
     static func calculateShippingFee(for subtotal: Double) -> Double {
         subtotal >= freeShippingThreshold ? 0 : defaultShippingFee
     }
 
-    /// Tổng tiền hàng (chưa gồm phí ship).
     var subtotal: Double { items.totalAmount }
-
-    /// Tổng thanh toán = tiền hàng + phí ship.
     var totalAmount: Double { subtotal + shippingFee }
-
-    /// Tổng số lượng sản phẩm trong đơn.
     var totalQuantity: Int { items.totalQuantity }
-
-    /// Đơn có được miễn phí giao hàng không.
     var isFreeShipping: Bool { shippingFee == 0 }
-
     var formattedSubtotal: String { subtotal.vndFormatted }
-
-    var formattedShippingFee: String {
-        isFreeShipping ? "Miễn phí" : shippingFee.vndFormatted
-    }
+    var formattedShippingFee: String {isFreeShipping ? "Miễn phí" : shippingFee.vndFormatted}
 
     var formattedTotal: String { totalAmount.vndFormatted }
 
-    // MARK: - Hiển thị
 
-    /// Mã đơn ngắn gọn để hiển thị, ví dụ: "DH-3F2A1B".
     var orderCode: String {
         "DH-" + id.uuidString.prefix(6).uppercased()
     }
 
-    /// Formatter ngày giờ dùng chung, ví dụ: "05/10/2026 09:41".
     private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "vi_VN")
@@ -103,12 +83,10 @@ struct Order: Identifiable, Hashable, Codable {
         return formatter
     }()
 
-    /// Ngày đặt đã định dạng.
     var formattedDate: String {
         Order.dateFormatter.string(from: orderDate)
     }
 
-    /// Tóm tắt nhanh nội dung đơn, ví dụ: "Cá Neon Tetra và 1 sản phẩm khác".
     var itemsSummary: String {
         guard let first = items.first else { return "Không có sản phẩm" }
         let others = items.count - 1
@@ -117,9 +95,7 @@ struct Order: Identifiable, Hashable, Codable {
             : first.product.name
     }
 
-    // MARK: - Kiểm tra dữ liệu
 
-    /// Đơn hợp lệ: có tên, số điện thoại, địa chỉ và ít nhất 1 sản phẩm.
     var isValid: Bool {
         !customerName.trimmingCharacters(in: .whitespaces).isEmpty
             && !phoneNumber.trimmingCharacters(in: .whitespaces).isEmpty
@@ -127,9 +103,7 @@ struct Order: Identifiable, Hashable, Codable {
             && !items.isEmpty
     }
 
-    // MARK: - Thay đổi trạng thái
 
-    /// Chuyển sang trạng thái kế tiếp. Trả về `false` nếu đơn đã kết thúc.
     @discardableResult
     mutating func advanceStatus() -> Bool {
         guard let next = status.next else { return false }
@@ -137,7 +111,6 @@ struct Order: Identifiable, Hashable, Codable {
         return true
     }
 
-    /// Hủy đơn. Chỉ hủy được khi đang "Chờ xử lý" hoặc "Đang chuẩn bị".
     @discardableResult
     mutating func cancel() -> Bool {
         guard status.canCancel else { return false }
@@ -146,28 +119,23 @@ struct Order: Identifiable, Hashable, Codable {
     }
 }
 
-// MARK: - Tiện ích cho danh sách đơn hàng
 
 extension Array where Element == Order {
 
-    /// Lọc đơn theo trạng thái (`nil` = tất cả).
     func filtered(by status: OrderStatus?) -> [Order] {
         guard let status else { return self }
         return filter { $0.status == status }
     }
 
-    /// Sắp xếp đơn mới nhất lên đầu.
     var sortedByNewest: [Order] {
         sorted { $0.orderDate > $1.orderDate }
     }
 
-    /// Tổng doanh thu từ các đơn đã giao thành công.
     var totalRevenue: Double {
         filter { $0.status == .delivered }.reduce(0) { $0 + $1.totalAmount }
     }
 }
 
-// MARK: - Dữ liệu mẫu
 
 extension Order {
 
@@ -221,6 +189,5 @@ extension Order {
         )
     ]
 
-    /// Một đơn mẫu dùng cho Xcode Preview.
     static let preview = sampleOrders[0]
 }
