@@ -7,7 +7,6 @@ import Foundation
 
 enum OrderStatus: String, CaseIterable, Codable, Identifiable {
 
-    // MARK: - Các trạng thái
 
     case pending   = "Chờ xử lý"
     case preparing = "Đang chuẩn bị"
@@ -15,11 +14,9 @@ enum OrderStatus: String, CaseIterable, Codable, Identifiable {
     case delivered = "Đã giao"
     case cancelled = "Đã hủy"
 
-    // MARK: - Identifiable
 
     var id: String { rawValue }
 
-    // MARK: - Hiển thị
 
     var displayName: String { rawValue }
 

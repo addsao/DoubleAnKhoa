@@ -52,7 +52,3 @@ struct HomeHeaderView: View {
         .padding(.top, 10)
     }
 }
-
-#Preview {
-    HomeHeaderView()
-}

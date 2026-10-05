@@ -27,7 +27,7 @@ struct ProductCardView: View {
             Text(product.name)
                 .font(.subheadline)
                 .lineLimit(1)
-            Text("\(product.price, specifier: \"%.0f\")đ")
+            Text("\(product.price, specifier: "%.0f")đ")
                 .font(.subheadline)
                 .foregroundColor(.red)
         }
