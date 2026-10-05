@@ -8,20 +8,46 @@
 import SwiftUI
 
 struct SearchBarView: View {
-    @Binding var searchText: String 
-    
+    @Binding var searchText: String
+    @FocusState private var isFocused: Bool
+
     var body: some View {
-        HStack {
-            HStack {
+        HStack(spacing: 8) {
+            HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
+                    .foregroundColor(isFocused ? .blue : .gray)
+                
                 TextField("Tìm cá, cây thủy sinh, phụ kiện...", text: $searchText)
-                Image(systemName: "slider.horizontal.3")
-                    .foregroundColor(.gray)
+                    .focused($isFocused)
+                    .autocorrectionDisabled()
+                    .onSubmit {
+                        isFocused = false
+                    }
+                
+                if !searchText.isEmpty {
+                    Button {
+                        searchText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             .padding(10)
             .background(Color(.systemGray))
-            .cornerRadius(10)
+            .cornerRadius(12)
+            .onTapGesture {
+                isFocused = true
+            }
+            
+            if isFocused || !searchText.isEmpty {
+                Button("Hủy") {
+                    searchText = ""
+                    isFocused = false
+                }
+                .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
         }
         .padding(.horizontal)
     }

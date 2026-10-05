@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    // 1. Khai báo ViewModel
     @EnvironmentObject var controller: StoreController
-
+    
     var body: some View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: false) {
@@ -40,19 +39,8 @@ struct ContentView: View {
                 }
                 .padding(.bottom, 20)
             }
-            .background(backgroundColor)
-            #if os(iOS)
-            .toolbar(.hidden, for: .navigationBar)
-            #endif
+            
         }
-    }
-    
-    private var backgroundColor: Color {
-        #if os(iOS)
-        return Color(uiColor: .systemGroupedBackground)
-        #else
-        return Color.gray.opacity(0.1)
-        #endif
     }
 }
 

@@ -8,27 +8,51 @@
 import SwiftUI
 
 struct LocationRowView: View {
+    @State private var locationName: String = "TTTM Gigamall, Phạm Văn Đồng"
+    @State private var showMapSheet: Bool = false
+
     var body: some View {
-        HStack {
-            Image(systemName: "mappin.circle.fill")
-                .foregroundColor(.blue)
-            
-            Text("Giao đến:")
-                .font(.subheadline)
-                .foregroundColor(.gray)
-            
-            Text("Phường Trảng Dài, TP. Biên Hòa")
-                .font(.subheadline)
-                .bold()
-                .lineLimit(1)
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundColor(.gray)
+        Button {
+            showMapSheet = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "mappin.and.ellipse")
+                    .foregroundColor(.red)
+                    .font(.subheadline)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Giao đến:")
+                        .font(.caption2)
+                        .foregroundColor(.gray)
+
+                    HStack(spacing: 4) {
+                        Text(locationName)
+                            .font(.subheadline)
+                            .bold()
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+
+                        Image(systemName: "chevron.down")
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                    }
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 6)
+            .background(Color.gray.opacity(0.08))
+            .cornerRadius(10)
+            .padding(.horizontal)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 6)
+        .buttonStyle(.plain)
+        .sheet(isPresented: $showMapSheet) {
+            LocationPickerView(selectedLocationName: $locationName)
+        }
     }
+}
+
+#Preview {
+    LocationRowView()
 }

@@ -1,15 +1,10 @@
-//
-//  ProductSectionView.swift
-//  Week4.team
-//
-//  Created by MAY 02 on 5/10/26.
-//
-
 import SwiftUI
 
 struct ProductSectionView: View {
     var title: String
     var products: [Product]
+    
+    @State private var isShowingAllProducts = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -18,9 +13,12 @@ struct ProductSectionView: View {
                     .font(.headline)
                     .bold()
                 Spacer()
-                Button("Xem tất cả >") { }
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
+                
+                Button("Xem tất cả >") {
+                    isShowingAllProducts = true
+                }
+                .font(.subheadline)
+                .foregroundColor(.blue)
             }
             .padding(.horizontal)
             
@@ -32,6 +30,9 @@ struct ProductSectionView: View {
                 }
                 .padding(.horizontal)
             }
+        }
+        .sheet(isPresented: $isShowingAllProducts) {
+            ProductListView(title: title, products: products)
         }
     }
 }

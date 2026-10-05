@@ -21,6 +21,11 @@ class StoreController: ObservableObject {
         loadData()
     }
     
+    func clearSearch() {
+            searchText = ""
+            selectedCategory = nil
+        }
+    
     func loadData() {
         self.categories = ProductCategory.sampleCategories
         self.products = Product.sampleProductsWithRandomImages
